@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7ef">
+  <title>Jevagotchi — a little life, a little help</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.4 5.4 0 0 0-7.6 0L12 5.8l-1.2-1.2a5.4 5.4 0 0 0-7.6 7.6L12 21l8.8-8.8a5.4 5.4 0 0 0 0-7.6Z"/></symbol>
+    <symbol id="i-food" viewBox="0 0 24 24"><path d="M3 11h18a9 9 0 0 1-18 0Zm3 10h12M8 3v4m4-5v5m4-4v4"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 8h10c3 0 5 11 2 12-2 1-4-3-5-3h-4c-1 0-3 4-5 3C2 19 4 8 7 8Zm5 0V4h4M6 12h5m-2.5-2.5v5M16 12h.1m2 3h.1"/></symbol>
+    <symbol id="i-clean" viewBox="0 0 24 24"><path d="m12 3 1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5ZM5 16l1 2 2 1-2 1-1 2-1-2-2-1 2-1Zm14-3 1 2 2 1-2 1-1 2-1-2-2-1 2-1Z"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13A9 9 0 0 1 11 3a9 9 0 1 0 10 10Z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16M8 4v6m8 4v6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  </defs></svg>
+  <div class="site-wrap">
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Jevagotchi home"><span class="brand-pet" aria-hidden="true"><i></i><i></i></span>jevagotchi<span class="brand-period">.</span></a>
+      <div class="header-right"><button class="icon-button" id="settings-top" aria-label="Open settings"><svg><use href="#i-settings"/></svg></button><a class="github-link" href="https://openrouter.ai/~typesafe/jev-latest" target="_blank" rel="noreferrer">Meet Jev <span aria-hidden="true">↗</span></a></div>
+    </header>
+    <main>
+      <div class="dashboard">
+        <section class="pet-card" aria-labelledby="room-title">
+          <div class="card-top"><div class="pet-heading"><span class="pet-avatar" aria-hidden="true">✦</span><div><h2 id="room-title">Mochi’s room</h2><p><span id="pet-age" title="Elapsed game time">Day 1 · 00:00</span><span class="separator">·</span><span id="pet-mood">Settling in</span></p></div></div><span class="live-badge" id="connection-status"><span></span> CONNECTING</span></div>
+          <div class="pet-room" id="pet-room">
+            
+            <svg class="room-art" viewBox="0 0 800 410" role="img" aria-label="A cozy sunlit room with a tiny green pet, a window, a plant, and a soft rug">
+              <defs><pattern id="floor" width="80" height="42" patternUnits="userSpaceOnUse"><rect width="80" height="42" fill="#e0dbc5"/><path d="M0 42h80M40 0v42" stroke="#d6d0b8" stroke-width="1"/></pattern><pattern id="wall" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r=".55" fill="#738b5b" opacity=".16"/></pattern><linearGradient id="sunlight" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffbd8" stop-opacity=".45"/><stop offset="1" stop-color="#fffbd8" stop-opacity="0"/></linearGradient></defs>
+              <rect width="800" height="410" fill="#e6ebd8"/><rect width="800" height="300" fill="url(#wall)"/>
+              <rect y="299" width="800" height="111" fill="url(#floor)"/><rect y="294" width="800" height="8" fill="#bdc3a4"/><rect y="288" width="800" height="6" fill="#d3dac0"/>
+              <path d="m117 68 148 0 246 342H254Z" fill="url(#sunlight)"/>
+              <g class="window"><rect x="100" y="60" width="160" height="154" rx="5" fill="#b7be9d"/><rect x="106" y="64" width="148" height="142" fill="#faf8e9"/><rect x="114" y="72" width="132" height="126" fill="#c5d9d2"/><circle cx="213" cy="100" r="18" fill="#f8edb1"/><path d="M115 135h41v-9h-9v-8h-20v9h-12m82 32h49v-12h-12v-9h-20v9h-16" fill="#edf3e6"/><path d="M115 189c30-30 57-23 81 0 18-16 33-19 50-14v23H115Z" fill="#a4b899"/><rect x="176" y="70" width="7" height="130" fill="#faf8e9"/><rect x="111" y="131" width="138" height="7" fill="#faf8e9"/><rect x="93" y="205" width="174" height="9" rx="2" fill="#f8f6e5"/><rect x="96" y="214" width="168" height="5" fill="#c5c9ad"/></g>
+              <g class="wall-art"><rect x="586" y="89" width="65" height="77" rx="2" fill="#a68c6c"/><rect x="592" y="95" width="53" height="65" fill="#f6f0d9"/><path d="M619 147v-30m0 14c-19 0-17-16-17-16 17-1 17 16 17 16Zm0-8c0-17 15-16 15-16s2 16-15 16Z" fill="#8f9c6b"/></g>
+              <ellipse cx="411" cy="345" rx="151" ry="35" fill="#b8b99b" opacity=".25"/><ellipse cx="406" cy="337" rx="147" ry="32" fill="#c7caa8"/><ellipse cx="406" cy="337" rx="129" ry="25" fill="none" stroke="#e9e7ce" stroke-width="2" stroke-dasharray="4 4"/>
+              <g class="plant"><ellipse cx="681" cy="321" rx="40" ry="9" fill="#b9bca2" opacity=".5"/><path d="M679 270v-71" stroke="#708852" stroke-width="6"/><path d="M679 242c-40 0-39-33-39-33 39-2 39 33 39 33Z" fill="#8d9f67"/><path d="M679 223c0-36 34-37 34-37 0 37-34 37-34 37Z" fill="#a0ae79"/><path d="M679 205c-24-7-24-35-24-35 33 5 24 35 24 35Z" fill="#7e965e"/><path d="m648 265 8 49h49l8-49" fill="#be8060"/><path d="m658 273 5 37h9l-3-37" fill="#ca9272"/><rect x="642" y="260" width="77" height="13" rx="3" fill="#cc9270"/></g>
+              <g class="bowl"><ellipse cx="193" cy="328" rx="38" ry="8" fill="#bebda3" opacity=".4"/><path d="M164 307h57l-7 18h-43Z" fill="#cb9c72"/><ellipse cx="192" cy="307" rx="28" ry="7" fill="#e7ba8c"/><ellipse cx="192" cy="307" rx="21" ry="4" fill="#a87f58"/><path d="M184 306h8m4 2h6" stroke="#ddb786" stroke-width="3"/></g>
+              <ellipse id="pet-shadow" cx="400" cy="332" rx="54" ry="10" fill="#89956a" opacity=".25"/>
+              <g id="pet-sprite" class="pet-sprite" shape-rendering="crispEdges">
+                <path d="M370 209h60v10h20v20h10v70h-10v10h-10v10h-30v-10h-20v10h-30v-10h-10v-10h-10v-70h10v-20h20Z" fill="#42634b"/>
+                <path d="M370 219h60v10h20v20h-10v-10h-10v-10h-60v10h-20v60h10v10h20v-10h40v10h20v-10h10v-50h10v60h-10v10h-30v-10h-20v10h-30v-10h-10v-70h20Z" fill="#b4cf79"/>
+                <path d="M370 229h60v10h10v60h-20v10h-40v-10h-20v-60h10Z" fill="#c5dd8b"/>
+                <path d="M380 239h10v10h-10Z" fill="#dfedb1"/>
+                <g id="pet-eyes"><path d="M372 265h8v13h-8Zm48 0h8v13h-8Z" fill="#304f3b"/><path d="M374 265h3v4h-3Zm48 0h3v4h-3Z" fill="#fff9df"/></g>
+                <path id="pet-mouth" d="M391 284h6v5h8v-5h6v6h-6v5h-8v-5h-6Z" fill="#42634b"/>
+                <path d="M358 279h14v7h-14Zm70 0h14v7h-14Z" fill="#e3aa85"/>
+                <path d="M400 209v-10h10v-10h20v10h-10v10Z" fill="#729653"/>
+              </g>
+              <g id="sleep-z" class="sleep-z" fill="#42634b" font-family="monospace" font-weight="bold"><text x="462" y="226" font-size="22">z</text><text x="480" y="203" font-size="30">z</text><text x="504" y="173" font-size="38">z</text></g>
+            </svg>
+            <div class="pet-speech" id="pet-speech">A tiny friend. A whole lot of possibility.</div>
+          </div>
+          <div class="needs" aria-label="Pet needs"><div class="need"><div><span><svg><use href="#i-food"/></svg>Fullness</span><strong id="hunger-value">—</strong></div><div class="meter" role="progressbar" aria-label="Fullness" aria-valuemin="0" aria-valuemax="100" id="hunger-meter"><span></span></div></div><div class="need"><div><span><svg><use href="#i-heart"/></svg>Happiness</span><strong id="happiness-value">—</strong></div><div class="meter" role="progressbar" aria-label="Happiness" aria-valuemin="0" aria-valuemax="100" id="happiness-meter"><span></span></div></div><div class="need"><div><span><svg><use href="#i-sun"/></svg>Energy</span><strong id="energy-value">—</strong></div><div class="meter" role="progressbar" aria-label="Energy" aria-valuemin="0" aria-valuemax="100" id="energy-meter"><span></span></div></div><div class="need"><div><span><svg><use href="#i-clean"/></svg>Cleanliness</span><strong id="cleanliness-value">—</strong></div><div class="meter" role="progressbar" aria-label="Cleanliness" aria-valuemin="0" aria-valuemax="100" id="cleanliness-meter"><span></span></div></div><div class="need"><div><span><svg><use href="#i-heart"/></svg>Health</span><strong id="health-value">—</strong></div><div class="meter" role="progressbar" aria-label="Health" aria-valuemin="0" aria-valuemax="100" id="health-meter"><span></span></div></div></div>
+          <div class="care-strip"><div class="care-actions"><button data-action="feed"><svg><use href="#i-food"/></svg><span>Feed</span></button><button data-action="play"><svg><use href="#i-play"/></svg><span>Play</span></button><button data-action="clean"><svg><use href="#i-clean"/></svg><span>Clean</span></button><button data-action="sleep" id="sleep-button"><svg><use href="#i-moon"/></svg><span>Rest</span></button><button data-action="heal"><svg><use href="#i-heart"/></svg><span>Heal</span></button></div></div>
+        </section>
+        <aside class="side-column">
+          <section class="agent-card" aria-labelledby="agent-title"><h2 id="agent-title">Jev caretaker</h2><div class="agent-toggle-row"><div><span class="toggle-title">Autopilot</span><span class="toggle-caption" id="autopilot-caption">Care, even between your visits</span></div><button class="toggle" id="autopilot-toggle" role="switch" aria-checked="false" aria-label="Enable Jev autopilot"><span></span></button></div><div class="agent-status"><span class="agent-status-dot" id="agent-dot"></span><span id="agent-status">Waiting to connect</span></div><div class="speed-control"><label for="demo-speed">Demo speed <output id="demo-speed-value" for="demo-speed">Real time</output></label><input id="demo-speed" type="range" min="0" max="3" step="1" value="0" aria-valuetext="Real time"><div class="cadence-control"><label for="care-cadence">Check interval · real time</label><select id="care-cadence" aria-label="Jev check interval"><option value="1">1 second</option><option value="2">2 seconds</option><option value="5">5 seconds</option><option value="10">10 seconds</option><option value="15">15 seconds</option><option value="30">30 seconds</option><option value="60" selected>1 minute</option><option value="120">2 minutes</option><option value="300">5 minutes</option></select></div></div><p class="agent-explanation" id="agent-explanation">Connect your OpenRouter key to let Jev check in, choose an action, and care for your pet.</p><button class="connect-button" id="connect-button">Connect Jev <svg><use href="#i-arrow"/></svg></button><button class="step-button" id="step-button" disabled><svg><use href="#i-spark"/></svg> Let Jev take a turn</button><div class="agent-footer"><span>POWERED BY</span><a href="https://openrouter.ai/~typesafe/jev-latest" target="_blank" rel="noreferrer">typesafe/jev-latest ↗</a></div></section>
+      <section class="journal" aria-labelledby="journal-title"><div class="journal-heading"><div><h2 id="journal-title">Jev activity</h2></div></div><ol id="event-list" class="event-list" aria-label="Jev activity feed" tabindex="0"><li class="empty-state">Your little story is about to begin.</li></ol><details class="decision-details"><summary>Decision details</summary><pre id="decision-data">No Jev decision yet. Connect a key and ask Jev to take a turn.</pre><p class="engine-note">Pet engine: <span id="engine-name">Loading…</span></p></details></section>
+        </aside>
+      </div>
+
+    </main>
+    <footer class="site-footer"><button id="reset-button">Start a new life <span aria-hidden="true">↗</span></button></footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog id="settings-dialog"><form id="settings-form"><div class="dialog-heading"><div><h2>Let Jev lend a hand.</h2></div><button class="close-button" type="button" id="close-settings" aria-label="Close settings">×</button></div><p>Add an OpenRouter API key to enable real AI care. Requests use your OpenRouter account and may incur charges.</p><label for="api-key">OpenRouter API key</label><input id="api-key" name="apiKey" type="password" placeholder="sk-or-v1-…" autocomplete="off" spellcheck="false"><small id="key-note">Your key is sent to this server, never stored in browser storage.</small><label for="interval">Time between check-ins</label><select id="interval" name="intervalSeconds"><option value="1">Every second</option><option value="2">Every 2 seconds</option><option value="5">Every 5 seconds</option><option value="10">Every 10 seconds</option><option value="15">Every 15 seconds</option><option value="30">Every 30 seconds</option><option value="60" selected>Every minute</option><option value="120">Every 2 minutes</option><option value="300">Every 5 minutes</option></select><p class="dialog-note">Autopilot runs while the server is running. Your pet’s needs keep changing with time.</p><div id="settings-error" class="form-error" role="alert"></div><button class="save-button" type="submit">Save connection <svg><use href="#i-arrow"/></svg></button><a class="key-link" href="https://openrouter.ai/settings/keys" target="_blank" rel="noreferrer">Get an OpenRouter key ↗</a></form></dialog>
+</body>
+</html>

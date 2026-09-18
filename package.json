@@ -1,0 +1,9 @@
+{
+  "name": "jevagotchi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A virtual pet cared for by TypeSafe Jev through OpenRouter",
+  "scripts": {"start": "node --env-file-if-exists=.env server.mjs", "dev": "node --env-file-if-exists=.env --watch server.mjs", "test": "node --test"},
+  "engines": {"node": ">=22"}
+}

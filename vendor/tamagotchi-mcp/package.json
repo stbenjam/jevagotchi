@@ -1,0 +1,39 @@
+{
+  "name": "tamagotchi-mcp",
+  "version": "1.0.0",
+  "description": "A Tamagotchi virtual pet MCP server - your digital companion that needs your care to thrive",
+  "type": "module",
+  "main": "./build/index.js",
+  "bin": {
+    "tamagotchi-mcp": "./build/index.js"
+  },
+  "files": [
+    "build/**/*"
+  ],
+  "scripts": {
+    "build": "tsc && chmod +x build/index.js",
+    "watch": "tsc --watch",
+    "prepare": "npm run build",
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "tamagotchi",
+    "virtual-pet",
+    "ai",
+    "digital-companion"
+  ],
+  "author": "Claude Code",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
