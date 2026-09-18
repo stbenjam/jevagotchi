@@ -7,8 +7,8 @@ let animationTimer;
 let lastDecisionAt;
 let pendingPath;
 let speedEditing = false;
-const demoSpeeds = [1, 60, 600, 3600];
-const demoSpeedLabels = ['Real time', '1 minute / sec', '10 minutes / sec', '1 hour / sec'];
+const demoSpeeds = [1, 60, 600, 3600, 7200, 21600, 86400];
+const demoSpeedLabels = ['Real time', '1 minute / sec', '10 minutes / sec', '1 hour / sec', '2 hours / sec', '6 hours / sec', '24 hours / sec'];
 const actions = { feed: 'i-food', play: 'i-play', clean: 'i-clean', sleep: 'i-moon', wake: 'i-sun', heal: 'i-heart', wait: 'i-clock' };
 
 function toast(message, error = false) {

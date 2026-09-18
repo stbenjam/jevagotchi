@@ -11,7 +11,7 @@ export function createApp({ apiKey = process.env.OPENROUTER_API_KEY || '', dataD
   let pet = createPet(), events = [], revision = 0, nextTurn = 0;
   const agent = { enabled: false, configured: Boolean(apiKey), busy: false, intervalSeconds: 30, lastDecision: null, lastError: null, model: '~typesafe/jev-latest' };
   const simulation = { speed: 1 };
-  const speeds = new Set([1, 60, 600, 3600]);
+  const speeds = new Set([1, 60, 600, 3600, 7200, 21600, 86400]);
   const advance = () => tick(pet, Date.now(), simulation.speed);
   const saveFile = dataDir && resolve(dataDir, 'pet.json');
   if (saveFile && existsSync(saveFile)) {

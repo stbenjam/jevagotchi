@@ -20,7 +20,7 @@ Pet state and recent activity are saved in `data/pet.json`. `.env` and `data/` a
 
 The app reuses the standalone JavaScript core of [tamagotchi-mcp 1.0.0](https://www.npmjs.com/package/tamagotchi-mcp), declared MIT by its publisher. The upstream engine supplies meals, play, cleaning, medicine, sleep/wake, mood, sickness, and evolution. Its two runtime source files are vendored unchanged; no package install scripts or MCP server run. See [provenance](vendor/tamagotchi-mcp/NOTICE.md). The npm archive does not include its referenced LICENSE file; its original licensing declarations are preserved.
 
-`engine.mjs` wraps the core with HTTP-server-owned persistence, fractional elapsed-time decay, and bounded stats. The Demo speed slider accelerates needs, age, and evolution together: real time, 60×, 600×, or 3600× (one game hour per real second). The pet header and action feed show game time. Jev’s check-in interval is independently set in real seconds, so simulation speed cannot silently multiply API calls. Demo speed resets to real time after a restart; offline time also passes at real speed. At normal speed, needs decay hourly and evolution takes days. All meters, including hunger/fullness, mean **higher is healthier**. Sleep/wake retain the upstream immediate energy boosts, with additional recovery while sleeping. This is a ROM-free virtual pet, not original Tamagotchi hardware emulation.
+`engine.mjs` wraps the core with HTTP-server-owned persistence, fractional elapsed-time decay, and bounded stats. The Demo speed slider accelerates needs, age, and evolution together: real time, 60×, 600×, 3600×, 7200×, 21600×, or 86400× (up to one game day per real second). The pet header and action feed show game time. Jev’s check-in interval is independently set in real seconds, so simulation speed cannot silently multiply API calls. Demo speed resets to real time after a restart; offline time also passes at real speed. At normal speed, needs decay hourly and evolution takes days. All meters, including hunger/fullness, mean **higher is healthier**. Sleep/wake retain the upstream immediate energy boosts, with additional recovery while sleeping. This is a ROM-free virtual pet, not original Tamagotchi hardware emulation.
 
 Other candidates researched:
 
@@ -45,7 +45,7 @@ The response's `answers.action.choice` must be one of `feed`, `play`, `sleep`, `
 - `POST /api/action` — `{ "action": "feed" }`.
 - `POST /api/agent` — `{ "enabled": true, "intervalSeconds": 30 }`; optional `apiKey` updates the in-memory key.
 - `POST /api/agent/step` — `{}`; ask Jev to choose and apply one action.
-- `POST /api/simulation` — `{ "speed": 3600 }`; accepted speeds are 1, 60, 600, and 3600.
+- `POST /api/simulation` — `{ "speed": 3600 }`; accepted speeds are 1, 60, 600, 3600, 7200, 21600, and 86400.
 - `POST /api/reset` — `{}`; reset the pet and pause autopilot.
 
 POST requests require `Content-Type: application/json`. No API returns the key.

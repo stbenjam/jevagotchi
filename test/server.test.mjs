@@ -140,7 +140,7 @@ test('invalid speeds preserve settings and one-second Jev cadence is independent
   assert.equal(cadence.status, 200);
   assert.equal(cadence.body.agent.intervalSeconds, 1);
   assert.equal(cadence.body.simulation.speed, 600);
-  for (const speed of [1, 60, 600, 3600]) {
+  for (const speed of [1, 60, 600, 3600, 7200, 21600, 86400]) {
     const changed = await request('/api/simulation', { speed });
     assert.equal(changed.status, 200);
     assert.equal(changed.body.simulation.speed, speed);
