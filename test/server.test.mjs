@@ -42,7 +42,7 @@ test('invalid inputs reject without changing settings or allowing cross-origin w
   for (const action of ['explode', '__proto__', null, 1]) {
     assert.equal((await request('/api/action', { action })).status, 400);
   }
-  for (const body of [{ enabled: 'yes' }, { apiKey: 7 }, { intervalSeconds: 0 }, { intervalSeconds: 10.5 }, { intervalSeconds: 3601 }]) {
+  for (const body of [{ enabled: 'yes' }, { apiKey: 7 }, ...[0, -1, 0.049, '0.05', null, true, 3600.01, 3601].map(intervalSeconds => ({ intervalSeconds }))]) {
     assert.equal((await request('/api/agent', body)).status, 400);
   }
   const invalidJson = await request('/api/action', {}, { body: '{' });
@@ -54,6 +54,46 @@ test('invalid inputs reject without changing settings or allowing cross-origin w
   assert.equal(state.agent.intervalSeconds, 30);
   assert.equal(state.agent.enabled, false);
   assert.equal(state.events.length, 1);
+});
+
+test('fractional Jev intervals include the 50ms minimum and preserve simulation speed', async t => {
+  const request = await app(t);
+  await request('/api/simulation', { speed: 21600 });
+  for (const intervalSeconds of [0.05, 0.1, 0.25, 0.5, 10.5, 3600]) {
+    const result = await request('/api/agent', { intervalSeconds });
+    assert.equal(result.status, 200);
+    assert.equal(result.body.agent.intervalSeconds, intervalSeconds);
+    assert.equal(result.body.simulation.speed, 21600);
+  }
+});
+
+test('fast autopilot exceeds one check per second while using fresh state and one in-flight decision', async t => {
+  let active = 0, maxActive = 0, completed = 0;
+  const inputs = [], starts = [];
+  const request = await app(t, { decideFn: async pet => {
+    active++;
+    maxActive = Math.max(maxActive, active);
+    inputs.push(pet);
+    starts.push(Date.now());
+    await new Promise(resolve => setTimeout(resolve, 80));
+    active--;
+    completed++;
+    return { action: 'feed', reason: 'A fresh meal.' };
+  } });
+  assert.equal((await request('/api/agent', { intervalSeconds: 0.05, enabled: true })).status, 200);
+  const deadline = Date.now() + 3000;
+  while (completed < 3 && Date.now() < deadline) {
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+  const running = (await request('/api/state')).body;
+  await request('/api/agent', { enabled: false });
+  while (active > 0) await new Promise(resolve => setTimeout(resolve, 10));
+  assert.ok(completed >= 3, 'autopilot completes repeated decisions');
+  assert.ok(starts[2] - starts[0] < 1000, 'at least three checks begin within one second');
+  assert.equal(maxActive, 1, 'slow decisions never overlap despite the shorter interval');
+  assert.ok(inputs[1].hunger > inputs[0].hunger + 24, 'the next decision sees the previous meal applied');
+  assert.ok(running.agent.actualChecksPerSecond > 1, 'the reported rate reflects completed scheduling');
+  assert.ok(running.events.filter(event => event.actor === 'jev').length >= 3);
 });
 
 test('keys stay server-side and a stubbed Jev decision performs the chosen action', async t => {

@@ -9,6 +9,7 @@ const root = dirname(fileURLToPath(import.meta.url));
 const actions = new Set(['feed', 'play', 'sleep', 'wake', 'clean', 'heal', 'wait']);
 export function createApp({ apiKey = process.env.OPENROUTER_API_KEY || '', dataDir = resolve(root, 'data'), decideFn = decide } = {}) {
   let pet = createPet(), events = [], revision = 0, nextTurn = 0;
+  let recentStarts = [];
   const agent = { enabled: false, configured: Boolean(apiKey), busy: false, intervalSeconds: 30, lastDecision: null, lastError: null, model: '~typesafe/jev-latest' };
   const simulation = { speed: 1 };
   const speeds = new Set([1, 60, 600, 3600, 7200, 21600, 86400]);
@@ -34,7 +35,10 @@ export function createApp({ apiKey = process.env.OPENROUTER_API_KEY || '', dataD
   if (!events.length) event('system', 'welcome', `${pet.name} has arrived. A little care goes a long way.`);
   function snapshot() {
     advance();
-    return { pet, events, simulation, agent: { ...agent, configured: Boolean(apiKey) }, engine: engineInfo };
+    const recent = recentStarts.filter(at => Date.now() - at < 10000);
+    const actualChecksPerSecond = agent.enabled && recent.length > 1
+      ? Math.round((recent.length - 1) * 10000 / Math.max(1, recent.at(-1) - recent[0])) / 10 : 0;
+    return { pet, events, simulation, agent: { ...agent, configured: Boolean(apiKey), actualChecksPerSecond }, engine: engineInfo };
   }
   async function step() {
     if (!apiKey) throw Object.assign(new Error('Add an OpenRouter API key in settings first.'), { status: 400 });
@@ -42,6 +46,8 @@ export function createApp({ apiKey = process.env.OPENROUTER_API_KEY || '', dataD
     agent.busy = true; agent.lastError = null;
     const startRevision = revision;
     const turnStartedAt = Date.now();
+    recentStarts.push(turnStartedAt);
+    recentStarts = recentStarts.slice(-30);
     try {
       advance();
       const choice = await decideFn(structuredClone(pet), { apiKey });
@@ -63,7 +69,7 @@ export function createApp({ apiKey = process.env.OPENROUTER_API_KEY || '', dataD
   const timer = setInterval(() => {
     advance();
     if (agent.enabled && !agent.busy && Date.now() >= nextTurn) step().catch(() => {});
-  }, 1000);
+  }, 10);
   const saveTimer = setInterval(save, 15000);
   timer.unref(); saveTimer.unref();
   function json(res, status, body) {
@@ -99,12 +105,12 @@ export function createApp({ apiKey = process.env.OPENROUTER_API_KEY || '', dataD
         } else if (path === '/api/agent') {
           if ('apiKey' in input && (typeof input.apiKey !== 'string' || input.apiKey.length > 512)) return json(res, 400, { error: 'Invalid API key.' });
           if ('enabled' in input && typeof input.enabled !== 'boolean') return json(res, 400, { error: 'enabled must be true or false.' });
-          if ('intervalSeconds' in input && (!Number.isInteger(input.intervalSeconds) || input.intervalSeconds < 1 || input.intervalSeconds > 3600)) return json(res, 400, { error: 'Choose an interval between 1 and 3600 seconds.' });
+          if ('intervalSeconds' in input && (!Number.isFinite(input.intervalSeconds) || input.intervalSeconds < 0.05 || input.intervalSeconds > 3600)) return json(res, 400, { error: 'Choose an interval between 0.05 and 3600 seconds.' });
           const candidateKey = 'apiKey' in input ? input.apiKey.trim() : apiKey;
           if (input.enabled && !candidateKey) return json(res, 400, { error: 'Add an OpenRouter API key first.' });
           if ('apiKey' in input) { apiKey = candidateKey; revision++; agent.lastError = null; if (!apiKey) agent.enabled = false; }
-          if ('intervalSeconds' in input) { agent.intervalSeconds = input.intervalSeconds; nextTurn = Date.now() + agent.intervalSeconds * 1000; }
-          if ('enabled' in input) { agent.enabled = input.enabled; nextTurn = Date.now(); if (!input.enabled) revision++; }
+          if ('intervalSeconds' in input) { agent.intervalSeconds = input.intervalSeconds; recentStarts = []; nextTurn = Date.now() + agent.intervalSeconds * 1000; }
+          if ('enabled' in input) { agent.enabled = input.enabled; recentStarts = []; nextTurn = Date.now(); if (!input.enabled) revision++; }
         } else if (path === '/api/simulation') {
           if (!speeds.has(input.speed)) return json(res, 400, { error: 'Choose a supported simulation speed.' });
           advance();

@@ -36,6 +36,12 @@ function formatAge(seconds) {
   return `Day ${day} · ${hour}:${minute}`;
 }
 
+function formatInterval(seconds) {
+  if (seconds < 1) return `${Math.round(seconds * 1000)} ms`;
+  if (seconds % 60 === 0) return `${seconds / 60} minute${seconds === 60 ? '' : 's'}`;
+  return `${seconds} second${seconds === 1 ? '' : 's'}`;
+}
+
 function timeAgo(value) {
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return '';
@@ -136,14 +142,18 @@ function render(data) {
   $('#autopilot-caption').textContent = agent.enabled ? 'A little care, on a regular rhythm' : 'Care, even between your visits';
   $('#agent-dot').classList.toggle('active', agent.configured && !agent.lastError);
   const thinking = agent.busy || pendingPath === '/api/agent/step';
-  $('#agent-status').textContent = thinking ? 'Jev is checking in…' : agent.lastError ? 'Jev needs a little attention' : !agent.configured ? 'Ready when you are' : agent.enabled ? 'Autopilot is looking after things' : 'Connected · waiting for a turn';
-  $('#agent-explanation').textContent = agent.lastError || (agent.busy ? 'Reading your pet’s needs and choosing the next care action through OpenRouter.' : !agent.configured ? 'Connect your OpenRouter key to let Jev check in, choose an action, and care for your pet.' : agent.enabled ? `Jev checks your pet’s needs every ${agent.intervalSeconds} seconds and decides how to help. You can still jump in anytime.` : 'Jev is connected. Turn on autopilot for regular check-ins, or ask for one little moment of care.');
+  const status = thinking ? 'Jev is checking in…' : agent.lastError ? 'Jev needs a little attention' : !agent.configured ? 'Ready when you are' : agent.enabled ? 'Autopilot is looking after things' : 'Connected · waiting for a turn';
+  const actualRate = Number(agent.actualChecksPerSecond) || 0;
+  const latency = Number.isFinite(agent.lastDecision?.latencyMs) ? ` · ${Math.round(agent.lastDecision.latencyMs)} ms` : '';
+  $('#agent-status').textContent = agent.enabled && !agent.lastError && actualRate > 0 ? `${actualRate.toFixed(1)} checks/sec${latency}` : status;
+  $('#agent-status').title = `${status} Actual check rate; requests run one at a time and depend on model response speed.`;
+  $('#agent-explanation').textContent = agent.lastError || (agent.busy ? 'Reading your pet’s needs and choosing the next care action through OpenRouter.' : !agent.configured ? 'Connect your OpenRouter key to let Jev check in, choose an action, and care for your pet.' : agent.enabled ? `Jev targets a check every ${formatInterval(agent.intervalSeconds)}. Actual speed depends on model response time.` : 'Jev is connected. Turn on autopilot for regular check-ins, or ask for one little moment of care.');
   $('#connect-button').firstChild.textContent = agent.configured ? 'Connection settings ' : 'Connect Jev ';
   $('#connect-button').hidden = Boolean(agent.configured);
   $('#agent-explanation').hidden = Boolean(agent.configured && !agent.lastError);
   $('#step-button').disabled = !agent.configured || agent.busy || actionPending;
   $('#step-button').lastChild.textContent = thinking ? ' Jev is thinking…' : ' Let Jev take a turn';
-  $('#autopilot-caption').textContent = agent.enabled ? `Checking every ${agent.intervalSeconds || 60} seconds` : 'Off · take a turn manually';
+  $('#autopilot-caption').textContent = agent.enabled ? `Target: every ${formatInterval(agent.intervalSeconds || 60)}` : 'Off · take a turn manually';
   if (!speedEditing) {
     const speedIndex = Math.max(0, demoSpeeds.indexOf(data.simulation?.speed || 1));
     $('#demo-speed').value = speedIndex;
@@ -153,7 +163,7 @@ function render(data) {
   const cadence = String(agent.intervalSeconds || 60);
   if (![...$('#care-cadence').options].some(option => option.value === cadence)) {
     const option = document.createElement('option');
-    option.value = cadence; option.textContent = `${cadence} seconds`;
+    option.value = cadence; option.textContent = formatInterval(Number(cadence));
     $('#care-cadence').append(option);
   }
   $('#care-cadence').value = cadence;
@@ -214,7 +224,7 @@ function openSettings() {
   if (!$('#interval').value) {
     const option = document.createElement('option');
     option.value = String(state.agent.intervalSeconds);
-    option.textContent = `Every ${state.agent.intervalSeconds} seconds`;
+    option.textContent = `Every ${formatInterval(state.agent.intervalSeconds)}`;
     $('#interval').append(option); $('#interval').value = option.value;
   }
   $('#settings-error').textContent = '';
@@ -282,5 +292,5 @@ $('#reset-button').addEventListener('click', async () => {
   try { await mutate('/api/reset', {}, 'A new little story begins.'); } catch { /* Error shown by mutate. */ }
 });
 refresh();
-setInterval(refresh, 1000);
+setInterval(() => { if (!document.hidden) refresh(); }, 250);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });

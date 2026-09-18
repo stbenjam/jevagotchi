@@ -12,7 +12,7 @@ cp .env.example .env
 npm start
 ```
 
-Open http://localhost:3000. Use the one-turn button for one decision or turn on autopilot. The server keeps caring while the browser is closed, provided the Node process remains running. Autopilot starts paused after a server restart. Check-in intervals range from 1 to 3600 real seconds (default 30); each turn makes one billable API request. Only one request runs at a time. Failures pause autopilot and appear in the UI. Manual changes made during an in-flight decision cause that stale decision to be discarded.
+Open http://localhost:3000. Use the one-turn button for one decision or turn on autopilot. The server keeps caring while the browser is closed, provided the Node process remains running. Autopilot starts paused after a server restart. Check-in intervals range from 0.05 to 3600 real seconds (default 30); each turn makes one billable API request. Fastest mode targets up to 20 checks/sec. Only one request runs at a time: each decision sees the result of the previous action, so actual throughput is limited by API latency. The page shows the observed checks/sec. Failures pause autopilot and appear in the UI. Manual changes made during an in-flight decision cause that stale decision to be discarded.
 
 Pet state and recent activity are saved in `data/pet.json`. `.env` and `data/` are ignored by Git. Keys entered through the UI stay in server memory, are never returned to the browser, and disappear on restart. The server binds only to loopback and rejects cross-origin writes. This is a single-user local app, not a public multiuser service.
 
